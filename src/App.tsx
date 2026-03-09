@@ -328,41 +328,76 @@ function DiceBox({ value, label, isRolling, borderColor, textColor, bgColor, sha
   shadowColor: string
 }) {
   return (
-    <div className="flex flex-col items-center gap-2 md:gap-4">
-      <motion.div
-        className={`relative w-32 h-32 sm:w-48 sm:h-48 md:w-64 md:h-64 rounded-xl md:rounded-2xl flex items-center justify-center border-4 border-b-[8px] md:border-b-[12px] ${borderColor} ${bgColor} ${textColor} shadow-lg md:shadow-xl`}
-        animate={isRolling ? {
-          rotateX: [0, 180, 360],
-          rotateY: [0, 180, 360],
-          scale: [1, 0.9, 1],
-          y: [0, -20, 0]
-        } : {
-          rotateX: 0,
-          rotateY: 0,
-          scale: 1,
-          y: 0
-        }}
-        transition={{ 
-          duration: 0.6, 
-          ease: "easeInOut"
-        }}
-        style={{ perspective: 1000 }}
+    <div className="flex flex-col items-center gap-4 md:gap-6">
+      <div 
+        className="relative w-32 h-32 sm:w-48 sm:h-48 md:w-64 md:h-64 [--cube-size:8rem] sm:[--cube-size:12rem] md:[--cube-size:16rem]" 
+        style={{ perspective: '1200px' }}
       >
-        {/* Inner Content */}
-        <motion.span 
-          className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tighter"
-          animate={isRolling ? { opacity: 0.5, filter: "blur(2px)" } : { opacity: 1, filter: "blur(0px)" }}
+        <motion.div
+          className="w-full h-full relative"
+          style={{ transformStyle: 'preserve-3d' }}
+          animate={isRolling ? {
+            rotateX: [0, 360, 720],
+            rotateY: [0, 360, 1080],
+            rotateZ: [0, 90, 180],
+            scale: [1, 0.8, 1],
+            y: [0, -60, 0],
+          } : {
+            rotateX: 0,
+            rotateY: 0,
+            rotateZ: 0,
+            scale: 1,
+            y: 0,
+          }}
+          transition={{ 
+            duration: 0.6, 
+            ease: "easeInOut"
+          }}
         >
-          {value}
-        </motion.span>
-        
-        {/* Shine effect */}
-        <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-white/60 to-transparent pointer-events-none" />
-      </motion.div>
+          {/* Front */}
+          <CubeFace value={value} borderColor={borderColor} bgColor={bgColor} textColor={textColor} shadowColor={shadowColor} transform="translateZ(calc(var(--cube-size) / 2))" />
+          {/* Back */}
+          <CubeFace value={value} borderColor={borderColor} bgColor={bgColor} textColor={textColor} shadowColor={shadowColor} transform="rotateY(180deg) translateZ(calc(var(--cube-size) / 2))" />
+          {/* Right */}
+          <CubeFace value={value} borderColor={borderColor} bgColor={bgColor} textColor={textColor} shadowColor={shadowColor} transform="rotateY(90deg) translateZ(calc(var(--cube-size) / 2))" />
+          {/* Left */}
+          <CubeFace value={value} borderColor={borderColor} bgColor={bgColor} textColor={textColor} shadowColor={shadowColor} transform="rotateY(-90deg) translateZ(calc(var(--cube-size) / 2))" />
+          {/* Top */}
+          <CubeFace value={value} borderColor={borderColor} bgColor={bgColor} textColor={textColor} shadowColor={shadowColor} transform="rotateX(90deg) translateZ(calc(var(--cube-size) / 2))" />
+          {/* Bottom */}
+          <CubeFace value={value} borderColor={borderColor} bgColor={bgColor} textColor={textColor} shadowColor={shadowColor} transform="rotateX(-90deg) translateZ(calc(var(--cube-size) / 2))" />
+        </motion.div>
+      </div>
       
-      <span className="text-gray-500 font-bold text-sm md:text-lg uppercase tracking-wider">
+      <span className="text-gray-500 font-bold text-sm md:text-lg uppercase tracking-wider bg-white/40 px-3 py-1 rounded-full backdrop-blur-sm shadow-sm">
         {label}
       </span>
+    </div>
+  );
+}
+
+function CubeFace({ value, borderColor, bgColor, textColor, shadowColor, transform }: { 
+  value: number, 
+  borderColor: string, 
+  bgColor: string, 
+  textColor: string, 
+  shadowColor: string,
+  transform: string 
+}) {
+  return (
+    <div 
+      className={`absolute inset-0 flex items-center justify-center border-4 border-b-8 ${borderColor} ${bgColor} ${textColor} rounded-2xl md:rounded-3xl shadow-xl`}
+      style={{ 
+        transform, 
+        backfaceVisibility: 'hidden',
+        WebkitBackfaceVisibility: 'hidden',
+      }}
+    >
+      <span className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tighter drop-shadow-sm">
+        {value}
+      </span>
+      {/* Shine effect */}
+      <div className="absolute inset-0 rounded-2xl md:rounded-3xl bg-gradient-to-tr from-white/30 via-transparent to-white/10 pointer-events-none" />
     </div>
   );
 }
